@@ -1,0 +1,15 @@
+---
+# yaml-language-server: $schema=https://taskfile.dev/schema.json
+
+version: "3"
+
+tasks:
+  install: 
+    desc: Installs all tools.
+    cmd: brew bundle install
+  update:
+    desc: Updates all tools. 
+    cmd: brew update && brew upgrade && brew upgrade --cask
+  cleanup: 
+    desc: Cleans up old versions of tools.
+    cmd: brew cleanup

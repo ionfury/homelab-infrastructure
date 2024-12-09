@@ -1,0 +1,21 @@
+---
+# yaml-language-server: $schema=https://taskfile.dev/schema.json
+
+version: "3"
+
+tasks:
+  format:
+    desc: Formats terrafrom files.
+    cmds:
+      - terragrunt hclfmt
+      - terraform fmt -recursive
+
+  apply:
+    desc: Applies terraform changes.
+    cmds:
+      - terragrunt apply
+
+  plan:
+    desc: Shows terraform changes.
+    cmds:
+      - terragrunt plan

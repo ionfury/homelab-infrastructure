@@ -1,0 +1,11 @@
+{
+  "editor.formatOnSave": true,
+  "yaml.schemaStore.enable": true,
+  "yaml.schemas": {
+    "kubernetes": "manifests/**/*.yaml, clusters/**/*.yaml"
+  },
+  "yaml.customTags": [
+    "!secret scalar",
+    "!env_var scalar"
+  ]
+}

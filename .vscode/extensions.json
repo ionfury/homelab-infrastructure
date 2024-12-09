@@ -1,0 +1,8 @@
+{
+  "recommendations": [
+    "EditorConfig.EditorConfig",
+    "HashiCorp.HCL",
+    "hashicorp.terraform",
+    "redhat.vscode-yaml"
+  ]
+}
