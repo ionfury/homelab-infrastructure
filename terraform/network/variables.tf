@@ -18,6 +18,24 @@ variable "raspberry_pis" {
   }))
 }
 
+variable "hosts" {
+  description = "Map of hosts with their cluster, LAN, and IPMI details"
+  type = map(object({
+    cluster = object({
+      member = string
+      role   = string
+    })
+    lan = list(object({
+      ip  = string
+      mac = string
+    }))
+    ipmi = object({
+      ip  = string
+      mac = string
+    })
+  }))
+}
+
 variable "unifi" {
   type = object({
     address        = string

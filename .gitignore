@@ -47,3 +47,6 @@ Thumbs.db
 
 # Ignore generated documentation
 docs/generated/
+
+# Ignore terragrunt cache
+*.terragrunt-cache

@@ -1,7 +1,7 @@
 locals {
-  network_vars = read_terragrunt_config(find_in_parent_folders("network.hcl"))
+  network_vars   = read_terragrunt_config(find_in_parent_folders("network.hcl"))
   inventory_vars = read_terragrunt_config(find_in_parent_folders("inventory.hcl"))
-  cloud_vars = read_terragrunt_config(find_in_parent_folders("cloud.hcl"))
+  cloud_vars     = read_terragrunt_config(find_in_parent_folders("cloud.hcl"))
 }
 
 inputs = merge(

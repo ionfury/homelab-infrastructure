@@ -3,7 +3,7 @@
   tasks:
     - name: Update and upgrade apt packages
       apt:
-        update_cache: yes
+        update_cache: no
         upgrade: dist
 
     - name: Install TFTP server
