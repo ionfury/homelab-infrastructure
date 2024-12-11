@@ -4,6 +4,7 @@ locals {
     address        = "https://192.168.1.1"
     username_store = "/homelab/unifi/terraform/username"
     password_store = "/homelab/unifi/terraform/password"
+    site = "default"
   }
 
   networks = {

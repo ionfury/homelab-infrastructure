@@ -1,10 +1,10 @@
 locals {
-  pxeboot_host = "pxeboot"
-
   raspberry_pis = {
     pxeboot = {
-      ip  = "192.168.10.213"
-      mac = "dc:a6:32:00:cd:cc"
+      lan = {
+        ip  = "192.168.10.213"
+        mac = "dc:a6:32:00:cd:cc"
+      }
       ssh = {
         user_store = "/homelab/raspberry_pi/pxeboot/ssh/user"
         pass_store = "/homelab/raspberry_pi/pxeboot/ssh/password"
