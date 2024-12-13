@@ -1,0 +1,69 @@
+---
+# yaml-language-server: $schema=https://taskfile.dev/schema.json
+
+version: "3"
+
+vars:
+  INVENTORY_FILE: "terraform/inventory.hcl"
+  USER: "ADMIN"
+  VALID_HOSTS:
+    sh: "cat {{ .INVENTORY_FILE }} | yj -cj | jq -r '.locals[].hosts[] | keys[]'"
+
+tasks:
+  list-hosts:
+    desc: Lists available hosts.
+    silent: true
+    cmds:
+      - echo "{{ .VALID_HOSTS }}"
+
+  status-*:
+    desc: Gets the status of the host.
+    vars:
+      HOST: "{{ index .MATCH 0 }}"
+    cmds:
+      - task: ipmi-command
+        vars:
+          HOST: "{{ .HOST }}"
+          COMMAND: "chassis status"
+
+  power-on-*:
+    desc: Powers on the host.
+    vars:
+      HOST: "{{ index .MATCH 0 }}"
+    cmds:
+      - task: ipmi-command
+        vars:
+          HOST: "{{ .HOST }}"
+          COMMAND: "chassis power on"
+
+  power-off-*:
+    desc: Powers off the host.
+    vars:
+      HOST: "{{ index .MATCH 0 }}"
+    cmds:
+      - task: ipmi-command
+        vars:
+          HOST: "{{ .HOST }}"
+          COMMAND: "chassis power off"
+
+
+  power-cycle-*:
+    desc: Power cycles the host.
+    vars:
+      HOST: "{{ index .MATCH 0 }}"
+    cmds:
+      - task: ipmi-command
+        vars:
+          HOST: "{{ .HOST }}"
+          COMMAND: "chassis power cycle"
+
+  ipmi-command:
+    internal: true
+    desc: Run ipmi command on hosts.
+    requires:
+      vars: [HOST, USER, COMMAND]
+    cmds:
+      - ipmitool -I lanplus -H {{ .HOST }}-ipmi.citadel.tomnowak.work -U {{ .USER }} {{ .COMMAND }}
+    preconditions:
+      - sh: test "$(echo "{{ .VALID_HOSTS }}" | grep -c "^{{ .HOST }}$")" -gt 0
+        msg: "'{{.HOST}}' is not a valid host.  Valid Hosts: \n{{ .VALID_HOSTS }}"

@@ -16,3 +16,7 @@ brew "ipmitool"
 # Ansible
 brew "ansible"
 brew "sshpass"
+
+# Tools
+brew "yj"
+brew "jq"

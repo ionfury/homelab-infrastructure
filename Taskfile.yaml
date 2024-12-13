@@ -8,8 +8,9 @@ vars:
     sh: "git rev-parse --show-toplevel"
 
 includes:
-  tools: .taskfiles/Tools
-  terraform: .taskfiles/Terraform
+  tools: .taskfiles/tools
+  terraform: .taskfiles/terraform
+  ipmi: .taskfiles/ipmi
 
 tasks:
   default: task --list-all
