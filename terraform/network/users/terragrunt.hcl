@@ -3,9 +3,8 @@ include "root" {
 }
 
 terraform {
-  source = "git@github.com:ionfury/homelab-terraform-modules.git//modules/unifi-users?ref=main"
+  source = "git@github.com:ionfury/homelab-terraform-modules.git//modules/unifi-users?ref=v0.1.0"
 }
-
 
 locals {
   inventory_vars = read_terragrunt_config(find_in_parent_folders("inventory.hcl"))

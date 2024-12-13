@@ -30,14 +30,16 @@ locals {
         mac = "ac:1f:6b:68:2a:9b"
       }
     }
-    /*
     node42 = {
       cluster = {
         member = "none"
         role = "none"
       }
+      disk = {
+        install = "/dev/sda"
+      }
       lan = [{
-        ip  = "xxx"
+        ip  = "192.168.10.203"
         mac = "ac:1f:6b:2d:bf:bc"
       }]
       ipmi = {
@@ -50,8 +52,11 @@ locals {
         member = "none"
         role = "none"
       }
+      disk = {
+        install = "/dev/sda"
+      }
       lan = [{
-        ip  = "xxx"
+        ip  = "192.168.10.201"
         mac = "ac:1f:6b:2d:bb:c8"
       }]
       ipmi = {
@@ -64,9 +69,12 @@ locals {
         member = "none"
         role = "none"
       }
+      disk = {
+        install = "/dev/sda"
+      }
       lan = [{
-        ip  = "ac:1f:6b:2d:ba:1e"
-        mac = "xxx"
+        ip  = "192.168.10.218"
+        mac = "ac:1f:6b:2d:ba:1e"
       }]
       ipmi = {
         ip  = "192.168.10.176"
@@ -78,9 +86,12 @@ locals {
         member = "none"
         role = "none"
       }
+      disk = {
+        install = "/dev/sda"
+      }
       lan = [{
-        ip  = "xxx"
-        mac = "0c:c4:7a:54:9e:6a"
+        ip  = "192.168.10.222"
+        mac = "ac:1f:6b:2d:bf:ce"
       }]
       ipmi = {
         ip  = "192.168.10.141"
@@ -92,43 +103,17 @@ locals {
         member = "none"
         role = "none"
       }
+      disk = {
+        install = "/dev/sda"
+      }
       lan = [{
-        ip  = "xxx"
-        mac = "ac:1f:6b:83:d3:1a"
+        ip  = "192.168.10.246"
+        mac = "ac:1f:6b:2d:c0:22"
       }]
       ipmi = {
         ip  = "192.168.10.231"
         mac = "ac:1f:6b:68:2b:e1"
       }
     }
-    node47 = {
-      cluster = {
-        member = "none"
-        role = "none"
-      }
-      lan = [{
-        ip  = "xxx"
-        mac = "ac:1f:6b:83:d3:2c"
-      }]
-      ipmi = {
-        ip  = "192.168.10.227"
-        mac = "ac:1f:6b:68:2b:dd"
-      }
-    }
-    node48 = {
-      cluster = {
-        member = "none"
-        role = "none"
-      }
-      lan = [{
-        ip  = "xxx"
-        mac = "ac:1f:6b:2d:bf:a8"
-      }]
-      ipmi = {
-        ip  = "192.168.10.243"
-        mac = "ac:1f:6b:68:2b:ed"
-      }
-    }
-    */
   }
 }
