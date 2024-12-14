@@ -16,7 +16,7 @@ locals {
     node41 = {
       cluster = {
         member = "live"
-        role = "control-plane"
+        role = "controlplane"
       }
       disk = {
         install = "/dev/sda"
@@ -33,7 +33,7 @@ locals {
     node42 = {
       cluster = {
         member = "live"
-        role = "control-plane"
+        role = "controlplane"
       }
       disk = {
         install = "/dev/sda"
@@ -50,7 +50,7 @@ locals {
     node43 = {
       cluster = {
         member = "live"
-        role = "control-plane"
+        role = "controlplane"
       }
       disk = {
         install = "/dev/sda"
@@ -66,8 +66,8 @@ locals {
     }
     node44 = {
       cluster = {
-        member = "none"
-        role = "none"
+        member = "null"
+        role = "null"
       }
       disk = {
         install = "/dev/sda"
@@ -83,8 +83,8 @@ locals {
     }
     node45 = {
       cluster = {
-        member = "none"
-        role = "none"
+        member = "null"
+        role = "null"
       }
       disk = {
         install = "/dev/sda"
@@ -101,7 +101,7 @@ locals {
     node46 = {
       cluster = {
         member = "development"
-        role = "control-plane"
+        role = "controlplane"
       }
       disk = {
         install = "/dev/sda"

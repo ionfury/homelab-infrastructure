@@ -1,0 +1,59 @@
+---
+# yaml-language-server: $schema=https://taskfile.dev/schema.json
+
+version: "3"
+
+vars:
+  TALOS_CONFIG_DIR: ~/.talos
+  KUBE_CONFIG_DIR: ~/.kube
+
+tasks:
+  host-disks-*:
+    desc: Lists the disks on the host.
+    vars:
+      HOST: "{{ index .MATCH 0 }}"
+    cmds:
+      - task: talos-command
+        vars:
+          HOST: "{{ .HOST }}"
+          COMMAND: "disks"
+
+  host-reset-*:
+    desc: Resets the host.
+    vars:
+      HOST: "{{ index .MATCH 0 }}"
+    cmds:
+      - task: talos-command
+        vars:
+          HOST: "{{ .HOST }}"
+          COMMAND: "reset"
+      
+  talos-command:
+    internal: true
+    silent: true
+    desc: Runs a talos command on a host.
+    requires:
+      vars: [HOST, COMMAND]
+    vars:
+      TALOS_CLUSTER_MEMBERSHIP:
+        sh:  cat {{ .INVENTORY_FILE }} | yj -cj | jq -r '.locals[].hosts[].{{ .HOST }}[].cluster[].member'
+      HOST_IP:
+        sh: cat {{ .INVENTORY_FILE}} | yj -cj | jq -r '.locals[].hosts[].{{ .HOST }}[].lan[0].ip'
+      TALOS_CONFIG_FILE: "{{ .TALOS_CONFIG_DIR }}/{{ .TALOS_CLUSTER_MEMBERSHIP }}.yaml"
+    cmds:
+      - |
+        if [ -f \"{{ .TALOS_CONFIG_FILE }}\" ]; then
+          talosctl --talosconfig {{ .TALOS_CONFIG_FILE }} -n {{ .HOST }} {{ .COMMAND }}
+        else
+          talosctl -n {{ .HOST_IP}} {{ .COMMAND }} --insecure 
+        fi
+    preconditions:
+      - sh: test "$(echo "{{ .VALID_HOSTS }}" | grep -c "^{{ .HOST }}$")" -gt 0
+        msg: "'{{.HOST}}' is not a valid host.  Valid Hosts: \n{{ .VALID_HOSTS }}"
+      - sh: test "{{ .TALOS_CLUSTER_MEMBERSHIP }}" != "null"
+        msg: "'{{.HOST}}' is not a member of a cluster.  Cluster Membership: {{ .TALOS_CLUSTER_MEMBERSHIP }}"
+      #- sh: test -f {{ .TALOS_CONFIG_DIR }}/{{ .TALOS_CLUSTER_MEMBERSHIP }}.yaml
+      #  msg: "Talos config for '{{.HOST}}' does not exist."
+      #- sh: test -f {{ .TALOS_HOST_CONFIG_FILE }}
+      #  msg: "Talos config for '{{.HOST}}' does not exist.  Run 'task inventory:generate-talos-config' to generate it."
+

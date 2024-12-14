@@ -4,24 +4,26 @@
 version: "3"
 
 vars:
-  INVENTORY_FILE: "terraform/inventory.hcl"
-  CREDENTIALS_FILE: ".taskfiles/ipmi/credentials.yaml"
   IPMI_DOMAIN_SUFFIX: "-ipmi.citadel.tomnowak.work"
-  VALID_HOSTS:
-    sh: "cat {{ .INVENTORY_FILE }} | yj -cj | jq -r '.locals[].hosts[] | keys[]'"
 
 tasks:
-  list-power-status:
+  power-status:
     silent: true
     cmds:
      - for: { var: VALID_HOSTS }
-       cmd: task ipmi:status-{{ .ITEM }} | grep "System Power" | awk '{print "{{ .ITEM }} " $0}'
+       cmd: task inventory:status-{{ .ITEM }} | grep "System Power" | awk '{print "{{ .ITEM }} " $0}'
 
-  list-hosts:
-    desc: Lists available hosts.
+  hosts:
+    desc: Lists all hosts.
     silent: true
     cmds:
       - echo "{{ .VALID_HOSTS }}"
+
+  host-membership:
+    desc: Lists host sand their registered cluster membership.
+    silent: true
+    cmds:
+      - cat {{ .INVENTORY_FILE }} | yj -cj | jq -r '.locals[].hosts[] | to_entries[] | "{host=\"\(.key)\", member=\"\(.value[].cluster[].member)\"}"'
 
   status-*:
     desc: Gets the status of the host.
@@ -92,7 +94,7 @@ tasks:
   ipmi-command:
     internal: true
     silent: true
-    desc: Run ipmi command on hosts.
+    desc: Run ipmi command on a host.
     requires:
       vars: [HOST, USER, COMMAND, IPMI_DOMAIN_SUFFIX]
     vars:

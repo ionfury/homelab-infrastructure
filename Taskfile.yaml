@@ -6,11 +6,16 @@ version: "3"
 vars:
   PROJECT_DIR:
     sh: "git rev-parse --show-toplevel"
+  INVENTORY_FILE: "terraform/inventory.hcl"
+  CREDENTIALS_FILE: "credentials.yaml"
+  VALID_HOSTS:
+    sh: "cat {{ .INVENTORY_FILE }} | yj -cj | jq -r '.locals[].hosts[] | keys[]'"
 
 includes:
   tools: .taskfiles/tools
   terraform: .taskfiles/terraform
-  ipmi: .taskfiles/ipmi
+  inventory: .taskfiles/inventory
+  talos: .taskfiles/talos
 
 tasks:
   default: task --list-all
