@@ -50,3 +50,5 @@ docs/generated/
 
 # Ignore terragrunt cache
 *.terragrunt-cache
+
+.taskfiles/ipmi/credentials.yaml

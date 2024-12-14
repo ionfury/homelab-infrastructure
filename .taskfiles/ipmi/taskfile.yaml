@@ -5,11 +5,18 @@ version: "3"
 
 vars:
   INVENTORY_FILE: "terraform/inventory.hcl"
-  USER: "ADMIN"
+  CREDENTIALS_FILE: ".taskfiles/ipmi/credentials.yaml"
+  IPMI_DOMAIN_SUFFIX: "-ipmi.citadel.tomnowak.work"
   VALID_HOSTS:
     sh: "cat {{ .INVENTORY_FILE }} | yj -cj | jq -r '.locals[].hosts[] | keys[]'"
 
 tasks:
+  list-power-status:
+    silent: true
+    cmds:
+     - for: { var: VALID_HOSTS }
+       cmd: task ipmi:status-{{ .ITEM }} | grep "System Power" | awk '{print "{{ .ITEM }} " $0}'
+
   list-hosts:
     desc: Lists available hosts.
     silent: true
@@ -46,7 +53,6 @@ tasks:
           HOST: "{{ .HOST }}"
           COMMAND: "chassis power off"
 
-
   power-cycle-*:
     desc: Power cycles the host.
     vars:
@@ -57,13 +63,50 @@ tasks:
           HOST: "{{ .HOST }}"
           COMMAND: "chassis power cycle"
 
+  sol-activate-*:
+    desc: Activates SOL on the host. (Escape via ~.)
+    vars:
+      HOST: "{{ index .MATCH 0 }}"
+    cmds:
+      - task: ipmi-command
+        vars:
+          HOST: "{{ .HOST }}"
+          COMMAND: "sol activate"
+
+  bootdev-*-*:
+    desc: "Sets the next boot device for the host (format: bootdev-<device>-<host>)."
+    vars:
+      HOST: "{{ index .MATCH 1 }}"
+      DEVICE: "{{ index .MATCH 0 }}"
+      VALID_DEVICES: none pxe disk safe diag cdrom bios floppy
+      OPTIONS: 
+    cmds:
+      - task: ipmi-command
+        vars:
+          HOST: "{{ .HOST }}"
+          COMMAND: "chassis bootdev {{ .DEVICE }} {{ .OPTIONS }}"
+    preconditions:
+      - sh: test "$(echo "{{ .VALID_DEVICES }}" | grep -c "{{ .DEVICE }}")" -gt 0
+        msg: "'{{ .DEVICE }}' is not a valid device.  Valid devices: \n{{ .VALID_DEVICES }}"
+
   ipmi-command:
     internal: true
+    silent: true
     desc: Run ipmi command on hosts.
     requires:
-      vars: [HOST, USER, COMMAND]
+      vars: [HOST, USER, COMMAND, IPMI_DOMAIN_SUFFIX]
+    vars:
+      PASSWORD:
+        sh: "cat {{ .CREDENTIALS_FILE }} | yj -yj | jq -r '.hosts[\"{{ .HOST }}\"].password'"
+      USERNAME:
+        sh: "cat {{ .CREDENTIALS_FILE }} | yj -yj | jq -r '.hosts[\"{{ .HOST }}\"].username'"
     cmds:
-      - ipmitool -I lanplus -H {{ .HOST }}-ipmi.citadel.tomnowak.work -U {{ .USER }} {{ .COMMAND }}
+      - "ipmitool -I lanplus -H {{ .HOST }}{{ .IPMI_DOMAIN_SUFFIX }} -U {{ .USERNAME }} -P '{{ .PASSWORD }}' {{ .COMMAND }}"
     preconditions:
       - sh: test "$(echo "{{ .VALID_HOSTS }}" | grep -c "^{{ .HOST }}$")" -gt 0
         msg: "'{{.HOST}}' is not a valid host.  Valid Hosts: \n{{ .VALID_HOSTS }}"
+      - sh: test "{{ .USERNAME }}" != "null"
+        msg: "Username for host '{{ .HOST }}' is blank.  Please update '{{ .CREDENTIALS_FILE }}' for '{{ .HOST }}'."
+      - sh: test "{{ .PASSWORD }}" != "null"
+        msg: "Password for host '{{ .HOST }}' is blank.  Please update '{{ .CREDENTIALS_FILE }}' for '{{ .HOST }}'."
+      
