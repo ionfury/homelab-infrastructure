@@ -1,0 +1,17 @@
+{
+  "extends": ["config:base"],
+  "terraform": {
+    "enabled": true
+  },
+  "regexManagers": [
+    {
+      "fileMatch": ["^.*\\.hcl$"],
+      "matchStrings": [
+        "source\\s*=\\s*\"(?<depName>[^\\s]+)\\?ref=(?<currentValue>[^\\s]+)\""
+      ],
+      "depNameTemplate": "{{depName}}",
+      "versioningTemplate": "semver",
+      "datasourceTemplate": "github-tags"
+    }
+  ]
+}
