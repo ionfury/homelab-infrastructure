@@ -26,11 +26,21 @@ tasks:
       - task: talos-command
         vars:
           HOST: "{{ .HOST }}"
-          COMMAND: "reset"
+          COMMAND: "reset --graceful=false --reboot"
+
+  host-version-*:
+    desc: Gets versions of the host.
+    vars:
+      HOST: "{{ index .MATCH 0 }}"
+    cmds:
+      - task: talos-command
+        vars:
+          HOST: "{{ .HOST }}"
+          COMMAND: "version"
       
   talos-command:
     internal: true
-    silent: true
+   # silent: true
     desc: Runs a talos command on a host.
     requires:
       vars: [HOST, COMMAND]
@@ -39,10 +49,10 @@ tasks:
         sh:  cat {{ .INVENTORY_FILE }} | yj -cj | jq -r '.locals[].hosts[].{{ .HOST }}[].cluster[].member'
       HOST_IP:
         sh: cat {{ .INVENTORY_FILE}} | yj -cj | jq -r '.locals[].hosts[].{{ .HOST }}[].lan[0].ip'
-      TALOS_CONFIG_FILE: "{{ .TALOS_CONFIG_DIR }}/{{ .TALOS_CLUSTER_MEMBERSHIP }}.yaml"
+      TALOS_CONFIG_FILE: "{{ .TALOS_CONFIG_DIR }}/{{ .TALOS_CLUSTER_MEMBERSHIP }}"
     cmds:
       - |
-        if [ -f \"{{ .TALOS_CONFIG_FILE }}\" ]; then
+        if [ -f {{ .TALOS_CONFIG_FILE }} ]; then
           talosctl --talosconfig {{ .TALOS_CONFIG_FILE }} -n {{ .HOST }} {{ .COMMAND }}
         else
           talosctl -n {{ .HOST_IP}} {{ .COMMAND }} --insecure 

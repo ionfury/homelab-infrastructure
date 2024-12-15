@@ -100,8 +100,8 @@ locals {
     }
     node46 = {
       cluster = {
-        member = "development"
-        role = "controlplane"
+        member = "cluster"
+        role   = "controlplane"
       }
       disk = {
         install = "/dev/sda"

@@ -3,7 +3,7 @@ include "root" {
 }
 
 terraform {
-  source = "git@github.com:ionfury/homelab-terraform-modules.git//modules/pxe-pi?ref=v0.1.0"
+  source = "git@github.com:ionfury/homelab-terraform-modules.git//modules/pxe-pi?ref=v0.8.0"
 }
 
 inputs = {
